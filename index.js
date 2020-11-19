@@ -15,7 +15,10 @@ var {gohttp} = require('gohttp')
 
 //模块学习
 var assert = require('assert');
+var asyncHook = require('async_hooks');
+
 const { error } = require('console');
+const { resolve } = require('path');
 
 var vueServerRender = require('vue-server-renderer').createRenderer(
 	// {
@@ -46,6 +49,36 @@ app.get('/assert', function(req, res) {
 	res.send('ok')
 })
 
+app.get('/asyncHook',function(req, res) {
+	//async_hooks是用来追踪异步资源的生命周期，每一个上下文都有一个asyncId和triggerAsyncId，是自身ID和触发自身异步的ID，通过两个ID可以很清楚知道异步关系
+	console.log('global Id', asyncHook.executionAsyncId())
+	console.log('trigger Id', asyncHook.triggerAsyncId())
+	fs.open('./App.html', 'r', (err, fd)=>{
+		console.log('fs.open.asyncId', asyncHook.executionAsyncId())
+		console.log('fs.open.triggerId', asyncHook.triggerAsyncId())
+	})
+	const createasyncHook = asyncHook.createHook({
+		init(asyncId, type, triggerAsyncId, resource) {
+			console.log('init', asyncId)
+		},
+		before(asyncId) {
+			console.log('before', asyncId)	
+		},
+		after(asyncId) {
+			console.log('after', asyncId)
+		},
+		destroy(asyncId){
+			console.log('destroy', asyncId)
+		},
+		promiseResolve(asyncId) {
+			console.log('promise', asyncId)
+		}
+	});
+	clearTimeout(setTimeout(() => {}, 10));
+	createasyncHook.enable();
+	clearTimeout(setTimeout(() => {}, 10));
+	res.send('ok')
+})
 
 // 接收请求服务端--------------------------------
 //http头部配置
