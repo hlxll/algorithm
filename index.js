@@ -12,16 +12,38 @@ var axios = require('axios');
 var request = require('request')
 var cheerio = require('cheerio')
 var {gohttp} = require('gohttp')
+
+//模块学习
+var assert = require('assert');
+const { error } = require('console');
+
 var vueServerRender = require('vue-server-renderer').createRenderer(
-	{
-		template:require('fs').readFileSync(path.join(__dirname,"./App.html"),'utf-8')
-	}
+	// {
+	// 	template:require('fs').readFileSync(path.join(__dirname,"./App.html"),'utf-8')
+	// }
 );
 const vueApp = new Vue({
     data:{
         message:'hello ssr'
     },
     template:'<div><p>使用服务端渲染技术</p></div>'
+})
+
+//学习模块
+app.get('/assert', function(req, res) {
+	//assert(1 == 3, '预期1不等于3')//asssert接受两个参数，第一个参数为false就会把第二个参数的内容作为错误抛出
+	//assert.ok是assert另外一个名字
+	//其他方法详细看文档
+	//assert.strictEqual(actual, expected, [message])//比较实际的和预期的是否相等，使用严格相等运算符（===）
+	//assert.notStrictEqual(actual, expected, [message])//使用严格不相等（!==）比较实际值和预期值
+	assert.throws(
+		function (){
+			throw new Error('error value')
+		},
+		Error,
+		'不符合预期的错误类型'
+	)//预期某个代码会抛出一个错误，抛出的错误符合指定条件，不符合就报错
+	res.send('ok')
 })
 
 
