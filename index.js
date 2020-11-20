@@ -80,14 +80,24 @@ app.get('/asyncHook',function(req, res) {
 	res.send('ok')
 })
 
+//未了解
 app.get('/buffer', function(req, res) {
 //buffer缓存区，当处理像TCP或文件流时，必须使用二进制数据，node定义buffer类专门用来存放二进制数据的缓存区
 //如果处理数据时候比到达的时间快，那么一部分数据到达了，就需要等待，等待区域就是buffer
 	const buf1 = Buffer.alloc(10)
-	const buf2 = Buffer.from('hello buffer')
-	res.send(buf2.toJSON())
-
+	//写入buffer
+	let len = buf1.write('www.bufer.com')
+	const buf2 = Buffer.from('hello')
+	console.log(len)
+	//读取buffer，第一个参数是读取数据编码，第二个和第三个是起始和结束位置
+	console.log(buf1.toString('utf8',0,5))
+	//合并缓存区
+	const buf3 = Buffer.concat([buf1, buf2])
+	console.log(buf3.toString('utf8', 0, 18))
+	res.send('ok')
 })
+
+app.get('')
 // 接收请求服务端--------------------------------
 //http头部配置
 app.all('*', function(req, res, next) {
