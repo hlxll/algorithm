@@ -97,6 +97,43 @@ app.get('/buffer', function(req, res) {
 	res.send('ok')
 })
 
+
+app.get('/crypto', function(req, res) {
+	let crypto;
+	try{
+		crypto = require('crypto')
+		let hash = crypto.createHash('md5');
+		hash.update('hello')
+		hash.update('nodejs')
+		console.log(hash.digest('hello'))
+		//sha256加密需要一个密钥，密钥改变，加密数据也会改变
+		let HmacHash = crypto.createHash('sha256', 'secret-key');
+		HmacHash.update('hello')
+		console.log(HmacHash.digest('hello'))
+
+
+		// AES是一种对此加解密，加密解密使用同一个密钥
+		function aesEncrypt(data, key) {
+			const cipher = crypto.createCipher('aes192', key);
+			var crypted = cipher.update(data, 'utf8', 'hex');
+			crypted += cipher.final('hex');
+			return crypted;
+		}
+		function aesDecrypt(encrypted, key) {
+			const decipher = crypto.createDecipher('aes192', key);
+			var decrypted = decipher.update(encrypted, 'hex', 'utf8');
+			decrypted += decipher.final('utf8');
+			return decrypted;
+		}
+		var encrypted = aesEncrypt('hello', 'keyPasswork');
+		console.log('加密'+ aesEncrypt('hello', 'keyPasswork'))
+		console.log('解密'+ aesDecrypt(encrypted, 'keyPasswork'))
+		res.send('支持')
+	}catch{
+		console.log('不支持crypto')
+		res.send('不支持')
+	}
+})
 app.get('')
 // 接收请求服务端--------------------------------
 //http头部配置
