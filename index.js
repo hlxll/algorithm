@@ -16,6 +16,7 @@ var {gohttp} = require('gohttp')
 //模块学习
 var assert = require('assert');
 var asyncHook = require('async_hooks');
+var dgram = require('dgram');
 
 const { error } = require('console');
 const { resolve } = require('path');
@@ -134,8 +135,40 @@ app.get('/crypto', function(req, res) {
 		res.send('不支持')
 	}
 })
-app.get('')
-// 接收请求服务端--------------------------------
+app.get('/dgram', function(req, res) {
+	//创建udp服务器与客户端，以及实现udp服务器与客户端之间的通信
+	const server = dgram.createSocket('udp4');
+	server.on("message", function (msg, rinfo) {
+		console.log('已接收到客户端发送的数据：' + msg);
+		console.log("客户端地址信息为：", rinfo);
+		let buf = Buffer.from(msg)
+		server.send(buf, 0, buf.length, rinfo.port, rinfo.address);
+	});
+
+	server.on("listening", function () {
+		let address = server.address();
+		console.log("服务器开始监听。地址信息为", address);
+	});
+	server.bind(8081, 'localhost');
+	})
+app.get('/clientDgram', function(req, res) {
+	const dgram = require('dgram');
+	let message = Buffer.from('你好。');
+	const client = dgram.createSocket('udp4');
+	client.send(message, 0, message.length, 8081, "localhost", function (err, bytes) {
+		if (err) {
+			console.log('发送数据失败');
+		} else {
+			console.log("已发送字节数据。", bytes);
+		}
+	});
+	client.on('message', function (msg, rinfo) {
+		console.log('已接收到服务器端发送的数据', msg);
+		console.log('服务器地址为', rinfo.address);
+		console.log('服务器所用端口号为', rinfo.port);
+	});
+})
+	// 接收请求服务端--------------------------------
 //http头部配置
 app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
