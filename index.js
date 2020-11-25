@@ -97,7 +97,7 @@ app.get('/buffer', function(req, res) {
 	res.send('ok')
 })
 
-
+debugger
 app.get('/crypto', function(req, res) {
 	let crypto;
 	try{
