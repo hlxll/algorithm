@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <div style="width: 600px; height: 600px;background-color: #000080;">
+        <canvas id="yuanzhu1"></canvas>
+        <canvas id="myCanvas" style="background-color: #000080;"></canvas>
+    </div>
+    <div>
+        <!-- <canvas id="xuehua1" style="background-color: #000080;" width="200" height="400"></canvas> -->
+    </div>
+    <script>
+        let yuanHeight = 10
+        var canvasId1 = document.getElementById("yuanzhu1")
+        var dataArr = [
+            {
+                x: 160,
+                y: 190,
+                yuanHeight: 900
+            },
+            {
+                x: 160,
+                y: 590,
+                yuanHeight: 1500
+            }
+        ]
+        
+        let closeTimeOut = setInterval(()=>{
+            canvasZero(canvasId1, dataArr, 'rgb(255, 255, 0)', 'rgb(255, 215, 0)', '7000', 'rgb(255, 193, 37)', 'rgba(255, 255, 0, 0.2)', yuanHeight)
+            if(yuanHeight>=100){
+                clearInterval(closeTimeOut)
+            }
+            yuanHeight +=10
+        },100)
+        function canvasZero(canvasId ,dataArr , allHeightColor, allColor, textContent, betweenColor, CanvaOpacity, yuanHeight){
+            //画图地址， 坐标， 中间小圆颜色， 外部大空心圆颜色， 内容（不用了）， 两个圆中间宫格颜色，  外部矩形颜色，  内部小柱子颜色，  圆柱高度
+            var canvasId = canvasId;
+            var allHeightColor = allHeightColor//中间小圆
+            var allColor = allColor//大圆
+            var betweenColor = betweenColor
+            var CanvaOpacity = CanvaOpacity//矩形
+            canvasId.width = 600;
+            canvasId.height = 600;
+            var yuanzhu = canvasId.getContext('2d')
+            yuanzhu.scale(1, 1/2)
+            for(let i=0; i<dataArr.length; i++){
+                var Xwidth = dataArr[i].x
+                var Yheight = dataArr[i].y
+                var maxHeight = dataArr[i].yuanHeight//圆柱高度
+
+                var textContent = yuanHeight*maxHeight/100//文字内容,通过圆柱高度设置
+                //根据高度设置颜色问题
+                if(textContent>=1000){
+                    allHeightColor = 'rgb(0, 255, 0)'
+                    allColor = 'rgb(0, 255, 0)'
+                    betweenColor = 'rgb(0, 205, 0)'
+                    CanvaOpacity = 'rgba(0, 255, 0, 0.2)'
+                }
+
+                //var Xwidth = x//水平坐标
+                //var Yheight = y//垂直坐标
+                //大矩形
+                yuanzhu.fillStyle = CanvaOpacity;
+                yuanzhu.fillRect(Xwidth+29,Yheight,-58,-yuanHeight*maxHeight/1000-30);//115
+                // ================
+                //下大椭圆
+                // var BottomBig = canvasId.getContext('2d')
+                yuanzhu.fillStyle = allColor
+                yuanzhu.beginPath();
+                yuanzhu.arc(Xwidth, Yheight, 30, 0, Math.PI*2, true)
+                yuanzhu.shadowOffsetY=5;
+                yuanzhu.shadowColor= allColor;
+                yuanzhu.closePath();
+                yuanzhu.fill()
+                // ==============
+                // 矩形
+                var juxing = canvasId.getContext('2d')
+                yuanzhu.fillStyle = CanvaOpacity;
+                yuanzhu.fillRect(Xwidth+15,Yheight,-30,-yuanHeight*maxHeight/1000);//85
+                //上大椭圆
+                var TopBig = canvasId.getContext('2d')
+                yuanzhu.fillStyle = allColor
+                yuanzhu.beginPath();
+                yuanzhu.arc(Xwidth, -yuanHeight*maxHeight/1000+Yheight-30, 30, 0, Math.PI*2, true)
+                yuanzhu.closePath();
+                yuanzhu.fill()
+                //上小椭圆
+                var can = canvasId.getContext('2d')
+                yuanzhu.fillStyle = allHeightColor
+                yuanzhu.beginPath();
+                yuanzhu.arc(Xwidth, -yuanHeight*maxHeight/1000+Yheight-35, 15, 0, Math.PI*2, true);
+                yuanzhu.shadowOffsetY=0;
+                yuanzhu.lineWidth=15;
+                yuanzhu.strokeStyle= betweenColor;
+                yuanzhu.stroke();//画空心圆
+                yuanzhu.closePath();
+                yuanzhu.fill()
+                //下小椭圆
+                var can2 = canvasId.getContext('2d')
+                yuanzhu.fillStyle = allHeightColor
+                yuanzhu.beginPath();
+                yuanzhu.arc(Xwidth, Yheight-5, 15, 0, Math.PI*2, true)
+                yuanzhu.shadowOffsetY=0;
+                yuanzhu.lineWidth=15;
+                yuanzhu.strokeStyle= betweenColor;
+                yuanzhu.stroke();
+                yuanzhu.closePath();
+                yuanzhu.fill()
+
+                //菱形
+                var grd2=yuanzhu.createLinearGradient(Xwidth,-yuanHeight*maxHeight/1000+Yheight-35,Xwidth,40);
+                if(textContent<=1000){
+                    grd2.addColorStop(0, 'rgba(255, 255, 0, 0.7)');
+                    grd2.addColorStop(1, 'rgba(255, 255, 0, 0.2)');
+                }else{
+                    grd2.addColorStop(0, 'rgba(0, 255, 0, 0.7)');
+                    grd2.addColorStop(0, 'rgba(0, 255, 0, 0.2)')
+                }
+                yuanzhu.fillStyle = grd2
+                yuanzhu.moveTo(Xwidth-17,Yheight-30-yuanHeight*maxHeight/1000);
+                yuanzhu.lineTo(Xwidth-22,Yheight-80-yuanHeight*maxHeight/1000);
+                yuanzhu.lineTo(Xwidth+22,Yheight-80-yuanHeight*maxHeight/1000);
+                yuanzhu.lineTo(Xwidth+17,Yheight-30-yuanHeight*maxHeight/1000);
+                yuanzhu.fill()
+                yuanzhu.beginPath();
+                yuanzhu.strokeStyle = 'rgba(0, 0, 0, 0)';
+                yuanzhu.lineWidth=1;
+                yuanzhu.shadowBlur=0;
+                yuanzhu.shadowOffsetY=0;
+                var grd=yuanzhu.createLinearGradient(Xwidth,-yuanHeight*maxHeight/1000+Yheight-35,Xwidth,40);
+                if(textContent<=1000){    
+                    grd.addColorStop(0, 'rgba(255, 255, 0, 0.6)');
+                    grd.addColorStop(1,"rgba(255, 255, 0, 0.2)");
+                    yuanzhu.fillStyle= grd;
+                }else{
+                    grd.addColorStop(0, 'rgba(0, 255, 0, 0.6)');
+                    grd.addColorStop(1,"rgba(0, 255, 0, 0.2)");
+                    yuanzhu.fillStyle= grd;
+                }
+                yuanzhu.moveTo(Xwidth-13,Yheight-30-yuanHeight*maxHeight/1000);
+                yuanzhu.lineTo(Xwidth-30,Yheight-70-yuanHeight*maxHeight/1000);
+                yuanzhu.lineTo(Xwidth+30,Yheight-70-yuanHeight*maxHeight/1000);
+                yuanzhu.lineTo(Xwidth+13,Yheight-30-yuanHeight*maxHeight/1000);
+                yuanzhu.closePath();
+                yuanzhu.fill()
+                yuanzhu.stroke();
+                yuanzhu.strokeStyle = 'white';
+                yuanzhu.font="20px Arial";
+                var FontXwidth = 0
+                if(textContent<=999){
+                    FontXwidth = Xwidth - 15
+                }else{
+                    FontXwidth = Xwidth - 25
+                }
+                yuanzhu.strokeText(textContent,FontXwidth, -yuanHeight*maxHeight/1000+Yheight-70);
+            }
+        }
+
+
+
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // 开始一条新路径
+        ctx.beginPath();
+        ctx.translate(100, 100);
+        var grd=ctx.createLinearGradient(100,100,100,0);
+        grd.addColorStop(0,"rgba(255, 69, 0, 1)");
+        grd.addColorStop(1,"rgba(255, 69, 0, 0.3)");
+        ctx.fillStyle = grd
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, 52, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+
+
+        ctx.beginPath();
+        var grd2=ctx.createLinearGradient(0,0,0,50);
+        grd2.addColorStop(0,"rgba(0, 0, 0, 1)");
+        grd2.addColorStop(1,"rgba(178, 34, 34, 1)");
+        ctx.fillStyle = grd2
+        ctx.strokeStyle="rgba(178, 34, 34, 0)";
+        ctx.shadowBlur=2;
+        ctx.shadowColor="rgba(178, 34, 34, 0.2)";
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, 50, Math.PI*0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        var grd3=ctx.createLinearGradient(0,0,0,50);
+        grd3.addColorStop(0,"rgba(178, 34, 34, 0)");
+        grd3.addColorStop(1,"rgba(178, 34, 34, 0.2)");
+        ctx.fillStyle = grd3
+        ctx.moveTo(0, 0);
+        ctx.lineWidth = 1
+        ctx.strokeStyle = 'rgba(0,0,0,0)'
+        ctx.arc(0, 0, 50, Math.PI*0.8, Math.PI * 2.2, true);
+        ctx.closePath();
+        ctx.fill();
+
+
+   
+    // context.beginPath();   
+    // //设置是个顶点的坐标，根据顶点制定路径
+    // var xPosi = 29
+    // var yPosi = 20
+    // for (var i = 0; i < 5; i++) {   
+    //     context.lineTo(Math.cos((18+i*72)/180*Math.PI)*20+xPosi,   
+    //                     -Math.sin((18+i*72)/180*Math.PI)*20+yPosi);   
+    //     context.lineTo(Math.cos((54+i*72)/180*Math.PI)*8+xPosi,   
+    //                     -Math.sin((54+i*72)/180*Math.PI)*8+yPosi);   
+    // }   
+    // context.closePath();   
+    //设置边框样式以及填充颜色   
+    // context.lineWidth="3";   
+    // context.fillStyle = "#F6F152";   
+    // context.strokeStyle = "#F5270B";   
+    // context.fill();   
+    // context.stroke();
+
+
+
+
+    // 雪花
+// function xuehuaCan(id, xhX, xhY){
+
+//     var xuehua = document.getElementById(id)
+//     var context = xuehua.getContext('2d');
+//     context.beginPath();
+//     context.fillStyle = 'red'
+//     context.arc(xhX, xhY, 3, 0, Math.PI * 2);
+//     context.closePath();
+//     context.fill();
+
+//     context.beginPath();
+//     context.fillStyle = 'red'
+//     context.arc(xhX-7, xhY, 2, 0, Math.PI * 2);
+//     context.closePath();
+//     context.fill();
+//     context.beginPath();
+//     context.fillStyle = 'red'
+//     context.arc(xhX+7, xhY, 2, 0, Math.PI * 2);
+//     context.closePath();
+//     context.fill();
+//     context.beginPath();
+//     context.fillStyle = 'red'
+//     context.arc(xhX, xhY-7, 2, 0, Math.PI * 2);
+//     context.closePath();
+//     context.fill();
+//     context.beginPath();
+//     context.fillStyle = 'red'
+//     context.arc(xhX, xhY+7, 2, 0, Math.PI * 2);
+//     context.closePath();
+//     context.fill();
+
+//     context.beginPath();
+//     context.lineWidth = 2;
+//     context.lineTo(xhX+4, xhY+4)
+//     context.lineTo(xhX+8, xhY+8)
+//     context.closePath();
+//     context.strokeStyle = 'red'
+//     context.stroke();
+
+
+//     context.beginPath();
+//     context.lineWidth = 2;
+//     context.lineTo(xhX-4, xhY-4)
+//     context.lineTo(xhX-8, xhY-8)
+//     context.closePath();
+//     context.strokeStyle = 'red'
+//     context.stroke();
+//     context.beginPath();
+//     context.lineWidth = 2;
+//     context.lineTo(xhX+4, xhY-4)
+//     context.lineTo(xhX+8, xhY-8)
+//     context.closePath();
+//     context.strokeStyle = 'red'
+//     context.stroke();
+//     context.beginPath();
+//     context.lineWidth = 2;
+//     context.lineTo(xhX-4, xhY+4)
+//     context.lineTo(xhX-8, xhY+8)
+//     context.closePath();
+//     context.strokeStyle = 'red'
+//     context.stroke();
+
+
+//     context.beginPath();
+//     context.scale(1, 1/2)
+//     context.fillStyle = 'red'
+//     context.arc(xhX-14, 2*xhY, 4, 0, Math.PI * 2);
+//     context.arc(xhX+14, 2*xhY, 4, 0, Math.PI * 2);
+//     context.closePath();
+//     context.fill();
+
+//     context.beginPath();
+//     context.scale(1/2, 2)
+//     context.fillStyle = 'red'
+//     context.arc(2*xhX, xhY-14, 4, 0, Math.PI * 2);
+//     context.arc(2*xhX, xhY+14, 4, 0, Math.PI * 2);
+//     context.closePath();
+//     context.fill();
+// }
+// var height = 100
+// let timexuehua = setInterval(() => {
+//     if(height>200){
+//         var c=document.getElementById("xuehua1");
+//         var ctx=c.getContext("2d");
+//         ctx.clearRect(0,0,200,400);
+//         clearInterval(timexuehua)
+//     }
+//     xuehuaCan('xuehua1', 100, height)
+//     height += 10
+// }, 1000);
+    </script>
+</body>
+</html>
